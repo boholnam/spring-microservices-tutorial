@@ -1,0 +1,1 @@
+INSERT INTO driver (id, name, status) VALUES ('1', 'Driver 1', 'AVAILABLE');

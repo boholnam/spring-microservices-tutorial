@@ -8,6 +8,34 @@ spring:
   main:
     lazy-initialization: false
 
+  datasource:
+    url: jdbc:h2:mem:uber-clone;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true  # Enable SQL query logging
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      mode: always
+
 eureka:
   client:
     service-url:
@@ -15,8 +43,41 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
+# Enhanced Logging Configuration
 logging:
   level:
-    com.netflix.eureka: DEBUG
-    com.netflix.discovery: DEBUG
-    org.springframework.web: DEBUG
+    root: INFO                 # Default logging level for the entire application
+    com.example.driver-service: DEBUG  # Enable DEBUG logs specifically for your application package
+    com.netflix.eureka: DEBUG  # Enable DEBUG logs for Eureka components
+    com.netflix.discovery: DEBUG # Enable DEBUG logs for Discovery components
+    org.springframework.web: DEBUG # Enable DEBUG logs for web components
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+  file:
+    name: logs/driver-service.log
+
+  logback:
+    rolling-policy:
+      file-name-pattern: logs/driver-service-%d{yyyy-MM-dd}.log
+      max-file-size: 10MB
+      max-history: 30
+
+# H2 Database Initialization Settings
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  health:
+    defaults:
+      enabled: true
+
+# Actuator Configuration
+endpoints:
+  actuator:
+    enabled: true
+    sensitive: false
